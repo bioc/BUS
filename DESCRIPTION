@@ -2,7 +2,7 @@ Package: BUS
 Type: Package
 Title: Gene network reconstruction
 Depends:  R (>= 2.3.0), minet
-Version: 1.0.0
+Version: 1.2.0
 Date: 2008-12-09
 Author: Yin Jin, Hesen Peng, Lei Wang and Christine Nardini
 Maintainer: Yin Jin <golden.jinyin@gmail.com>
