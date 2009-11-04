@@ -1,0 +1,6 @@
+BUS_1.0.1 
+      - fix errors in BUS.r
+BUS_1.0.2
+      - C codes are used to compute gene-trait mutual information instead of R codes
+      -  MM-correction for multiple hypothesis testing is deleted.
+      -  miRNA and mRNA data from brain tumors are used for gene-trait association testing

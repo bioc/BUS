@@ -1,4 +1,5 @@
-"pred.network"<-function(pM,similarity,thresh){
+`pred.network` <-
+function(pM,similarity,thresh=0.05){
 if(is.numeric(pM)){
 Ttestcorr<-function(pM,similarity,alpha){
   Ttest<-similarity

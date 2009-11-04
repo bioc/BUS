@@ -20,61 +20,49 @@ bus <- packageDescription("BUS")
 @
 
 \title{BUS Vignette}
-\author{Yin Jin, Hesen Peng, Lei Wang, Christine Nardini}
+\author{Yin Jin, Hesen Peng, Lei Wang, Raffaele Fronza, Yuanhua Liu and Christine Nardini}
 \maketitle
 
 \section{Introduction}
 
-{\bf GOAL:} The BUS package allows the computation of two types of similarities 
-(correlation \cite{sokal} and mutual information \cite{cover}) for two different
- goals: (i) identification of the similarity among the activity of molecules sampled 
- across different experiments (we name this option Unsupervised, U), (ii) identification 
- of the similarity between such molecules and other types of information (clinical, 
- anagraphical, etc, we name this option supervised, S).
+{\bf GOAL:} The BUS package allows the computation of two types of similarities (correlation \cite{sokal} and mutual information \cite{cover}) for two different
+ goals: (i) identification of the similarity among the activity of molecules sampled  across different experiments (we name this option Unsupervised, U), (ii) identification  of the similarity between such molecules and other types of information (clinical,  anagraphical, etc, we name this option supervised, S).
 
-{\bf Unsupervised Option.} The computation applies to data in tabular form (MxN)
- where rows represents different molecules (M), columns represents experiments 
- or samples (N) and the content of the tables' cells the abundance of the molecule 
- in the sample.
-Microarray experiments are the data of choice for this application, but the method 
-can be applied to any data in the appropriate format (miRNA arrays, RNA-seq data, etc.).
-The results are in the form of an MxM adjacency matrix, where each cell represents 
-the association computed among the corresponding molecules.
+{\bf Unsupervised Option.} The computation applies to data in tabular form (MxN) where rows represents different molecules (M), columns represents experiments 
+ or samples (N) and the content of the tables' cells the abundance of the molecule  in the sample.
+Microarray experiments are the data of choice for this application, but the method can be applied to any data in the appropriate format (miRNA arrays, RNA-seq data, etc.).
+The results are in the form of an MxM adjacency matrix, where each cell represents the association computed among the corresponding molecules.
 This matrix has associated also a p-value matrix and a corrected p-value matrix (see below for details).
 Based on the cutoff selected, the adjacency matrix can be trimmed and lead to a predicted network of statistically significant interactions (\verb@pred.network@). 
-This output can be used as-is to represent a gene association network (\cite{margolin,basso}), 
-or can be further elaborated to cluster genes based on a shared degree of similarity 
-(hence the Unsupervised label). Mutual information (from now on MI) is computed using 
-the minet package \cite{meyer}, all the options can be found in the corresponding vignette. 
-Here argument net.trim decides which function (mrnet/clr/aracne) in MINET package 
-is used to give the similarity based on mutual information matrix. Correlation is computed using the R built-in cor function.
+This output can be used as-is to represent a gene association network (\cite{margolin,basso}), or can be further elaborated to cluster genes based on a shared degree of similarity (hence the Unsupervised label). 
+Mutual information (from now on MI) is computed using the minet package \cite{meyer}, all the options can be found in the corresponding vignette. 
+Here argument \verb@net.trim@ decides which function (mrnet/clr/aracne) in MINET package is used to give the similarity based on mutual information matrix. Correlation is computed using the R built-in \verb@cor@ function.
 
-{\bf Supervised Option.} For the S option a second dataset is necessary, a TxN table, 
-where T represents the number of external traits of interest.
-The result is an association MxT table where each cell 
-indicates the association between the molecule and the external trait. 
+{\bf Supervised Option.} For the S option a second dataset is necessary, a TxN table, where T represents the number of external traits of interest.
+The result is an association MxT table where each cell indicates the association between the molecule and the external trait. 
+Mutual information is computed according to the empirical method proposed in MINET package. It is implemented with a external c function.
 This matrix has associated also a p-value matrix and a corrected p-value matrix (see below for details).
-As this can be used to associate samples to clinical classes we call this option Supervised 
-(this type of approach was used in \cite{diehn08}).
+As this can be used to associate samples to clinical classes we call this option Supervised (this type of approach was used in \cite{diehn08}).
 
-{\bf Statistical Significance.} The package offers the possibility 
-to evaluate the statistical significance of the computed similarity measures in two steps, a summary of the options is given in Table\,\ref{tab:summary}.
+{\bf Statistical Significance.} The package offers the possibility to evaluate the statistical significance of the computed similarity measures in two steps, a summary of the options is given in Table\,\ref{tab:summary}.
  \begin{table}[h]
- \begin{tabular}{|c|c|c|c|c|}
+ \begin{center}
+ \begin{tabular}{|c|c|c|c|}
 \hline
-\multirow{3}{*}{Option}&\multicolumn{4}{|c|}{$p$-value} \\
-\cline{2-5}
-&\multicolumn{2}{|c|}{single} &\multicolumn{2}{|c|}{multiple}\\
-\cline{2-5}
-& $\rho$ & $ MI$ & $\rho$ & $ MI$\\
+\multirow{3}{*}{Option}&\multicolumn{3}{|c|}{$p$-value} \\
+\cline{2-4}
+&\multicolumn{2}{|c|}{single} &multiple\\
+\cline{2-4}
+& $\rho$ & $ MI$ &$ MI$\\
 \hline
-S & \multirow{2}{*}{Exact} & \multirow{2}{*}{$beta$ distribution} & \multicolumn{2}{|c|}{MM-correction or permutations (3 options)} \\
-\cline{1-1}\cline{4-5}
-U &  & & \multicolumn{2}{|c|}{MM-correction or permutations} \\
+S & \multirow{2}{*}{Exact} & \multirow{2}{*}{$beta$ distribution} & permutations (3 options) \\
+\cline{1-1}\cline{4-4}
+U & & & permutations \\
 \hline
 \end{tabular}
 \caption{Summary of the available options for statistical validation in BUS. $\rho$ indicates correlation.}
 \label{tab:summary}
+\end{center}
  \end{table}
 
 First, it allows the computation of the "single" p-value, i.e. the p-value relevant 
@@ -86,14 +74,13 @@ For correlation this relies on the R built-in cor.test and it then computes the 
 For MI it is obtained from permutations and this method estimates the extreme p-values (close to 0) 
 by fitting a beta distribution, whose analytical expression is obtained by the estimate of 2 shape parameters ($\hat{\alpha}$ and $\hat{\beta}$) using the method of the moments. 
 
-Second, the correction of the p-value for multiple hypothesis testing can be 
-computed either based on permutations or on meta analysis (MM-correction, \cite{nardinispringer08}).
-These approaches are the same for MI and correlation, however they offer 3 types of correction:
+Second, for the p-value of MI, correction for multiple hypothesis testing is computed based on permutations. 
+3 types of corrections are offered:
 
 \begin{itemize}
-\item S analysis option \verb@method.permut@ = 1 corrects for all genes
-\item S analysis option \verb@method.permut@ = 2 corrects for all traits
-\item S analysis option \verb@method.permut@ = 3 corrects for all traits and genes
+\item S analysis option \verb@method.permut@ = 1 correction for multiple traits tested
+\item S analysis option \verb@method.permut@ = 2 correction for multiple genes tested
+\item S analysis option \verb@method.permut@ = 3 correction for both traits and genes
 \end{itemize}
 
 {\bf Missing Data Treatment.} Data are pre-processed to cope with missing information 
@@ -104,10 +91,10 @@ The main function BUS has arguments for:
 \begin{itemize}
 \item the type of analysis (supervised/unsupervised) 
 \item the distance metric (correlation/MI) 
-\item the correction method for statistical significance on multiple hypothesis testing (permutation/MM-correction)
+\item the correction types for statistical significance on multiple hypothesis testing based on permutations (genes, traits or both)
 \end{itemize}
 
-{\bf Expected computation times.} The anticipated time for a 50*10 matrix is 3 minutes when running on an ordinary personal computer (with 256k memory).
+{\bf Expected computation times.} In the unsupervised case, the anticipated time for a 50*12 matrix (gene expression data) is 30 seconds when running on an ordinary personal computer (with 1G memory). While in the supervised case, with 50*12 gene expression data and trait data involved, it is 2 minute when correction of both genes and traits is considered.
 
 
 The functions' dependencies scheme of the BUS package is illustrated below.
@@ -130,18 +117,16 @@ and the single p-value matrix (each element is the p-value under the null hypoth
 \verb@gene.trait.similarity@: Function for the computation of the similarity matrix in the Supervised option (using correlation/MI as metric)
 
 \verb@gene.pvalue@: Function for the computation of the p-value matrix for the Unsupervised option.
-Single p-value (each element is the p-value under the null hypothesis that the related row gene and column gene have no interaction) is computed thanks to: (i) for MI the distribution identified by the p permutation values identified for each gene, with extreme p-values computed fitting a beta distribution; for correlation using the exact distribution provided by the built-in R cor function (single.perm.p.value).
-Corrected p-value is computed thanks to (i) the distribution identified by the p permutation values across all genes (multi.perm.p.value); (ii) the use of MM-correction (MMcorrected.p.value). 
-When correlation is used as matric, only exact p-value and related MMcorrected.pvalue is output)
+Single p-value (each element is the p-value under the null hypothesis that the related row gene and column gene have no interaction) is computed thanks to: (i) for MI the distribution identified by the P permutation values identified for each gene, with extreme p-values computed fitting a beta distribution; for correlation using the exact distribution provided by the built-in R cor function (single.perm.p.value).
+Corrected p-value is computed thanks to the distribution identified by the p permutation values across all genes (multi.perm.p.value).
+When correlation is used as matric, only exact p-value is output.
 
 \verb@gene.trait.pvalue@:  Function for the computation of the p-value matrix for the Supervised option.
-Single p-value (each element is the p-value under the null hypothesis that the related row gene and column trait have no interaction) is computed thanks to: (i) for MI the distribution identified by the P permutation values identified for each gene, with extreme p-values computed fitting a beta distribution; for correlation using the exact distribution provided by the built-in R cor function (single.perm.p.value).
-Corrected p-value is computed thanks to (i) the distribution identified by the p permutation values across all genes (multi.perm.p.value); (ii) the distribution identified by the p permutation values across all traits; (iii) the distribution identified by the p permutation values across all genes and traits; (iv) the use of MM-correction (MMcorrected.p.value). 
-P-values are calculated based on similarity for gene-gene interaction by calling function 
+Single p-value (each element is the p-value under the null hypothesis that the related row gene and column trait have no interaction) is computed thanks to: (i) for MI the distribution identified by the P permutation values identified for each gene, with extreme p-values computed fitting a beta distribution; for correlation using the exact distribution provided by the built-in R \verb@cor@ function (single.perm.p.value).
+Corrected p-value is computed thanks to the distribution identified by the P permutation values across all genes (multi.perm.p.value); (ii) the distribution identified by the P permutation values across all traits; (iii) the distribution identified by the P permutation values across all genes and traits. 
 
 \verb@pred.network@: Function to predict the network from the selected corrected p-value matrix, only for the Unsupervised option.
 
-\verb@MM.correction@: Function to compute the MM-corrected p-values matrix from single p-value matrix using the MM-correction method, can be used as standalone function, on any set of p-values. 
 
 
 
@@ -149,62 +134,47 @@ P-values are calculated based on similarity for gene-gene interaction by calling
 
 <<association.genes>>=
 library(BUS)
-#.libPaths("picb/home52/liuyuanhua/Library/R/2.8/library")
 library(minet)
 data(copasi)
 mat=as.matrix(copasi)[1:5,]
-BUS(EXP=mat,measure="MI",method.correct="both",n.replica=50,net.trim="aracne",thresh=0.05,nflag=1)
+rownames(mat)<-paste("G",1:nrow(mat), sep="")
+BUS(EXP=mat,measure="MI",n.replica=400,net.trim="aracne",thresh=0.05,nflag=1)
 @
 The arguments to the \verb@BUS@ function here  are
 \begin{itemize}
-\item a matrix (here \verb@EXP@) for gene expression data.
-\item metric used to calculate similarity (here \verb@measure@). There are two choices, MI and corr. 
-We use MI here, applying the MINET package to output the similarity matrix with option of mrnet.
-\item a flag to indicate which method is used to correct permutation p-values (here \verb@method.permut@).
- Here a default value (2) is used.
-\item method chosen (here \verb@method.correct@) to calculate p-value: "MMcorrection" for MM-correction, 
-"permutation" for corrected permutation, "both" for both MM-correction and permutation methods. 
-Here both p-value matrices are output.
-\item number of permutations (here \verb@n.replica@): default value is 400, for optimal precision in p-value computation.
-\item method chosen (here \verb@net.trim@) to trim the network. Here aracne method is applied, where the least significant edge in each triplet is removed.
-\item threshold (here \verb@threshold@), according to which significant association between genes are selected 
-to construct the predicted network. This option is acutually used in function \verb@pred.network@ for prediced 
-network from p-value matrix.
-\item a flag for the type of analysis (here \verb@nflag@). If Supervised nflag=2, if Unsupervised nflag=1. Here an Unsupervised option is considered.
+\item \verb@EXP@, a matrix for gene expression data.
+\item  \verb@measure@, metric used to calculate similarity. There are two choices, MI and corr. We use MI here, applying the MINET package to output the similarity matrix with option of  \verb@aracne@.
+\item \verb@method.permut@, a flag to indicate which method is used to correct permutation p-values. Here a default value (2) is used.
+\item \verb@n.replica@, number of permutations: default value is 400, for optimal precision in p-value computation.
+\item \verb@net.trim@, method chosen to trim the network. Here aracne method is applied, where the least significant edge in each triplet is removed.
+\item \verb@threshold@, threshold, according to which significant association between genes are selected to construct the predicted network. This option is acutually used in function \verb@pred.network@ for predicted network from p-value matrix.
+\item \verb@nflag@, a flag for the type of analysis. If Supervised \verb@nflag@=2, if Unsupervised \verb@nflag@=1. Here an Unsupervised option is considered.
 \end{itemize}
 
-The dataset copasi is taken from Copasi2 (Complex Pathway Simulator), a software for simulation and analysis of biochemical
-networks. The system generates random artificial gene networks according to well-defined topological and kinetic
-properties. These are used to run in silico experiments simulating real laboratory micro-array experiments. Noise with controlled
-properties is added to the simulation results several times emulating measurement replicates, before expression ratios
-are calculated. This series consists of 150 artificial gene networks. Each network consists of 100 genes with a total of 200
-gene interactions (on average each gene has 2 modulators). All networks are composed of genes with similar kinetics, the
-only difference between networks is how the gene interactions are organized (i.e. which genes induce and repress which other
-genes). The networks belong to three major groups according to their topologies: RND stands for randomized network, SF
-for scale-free(many edges among few nodes) and SW for small world (edges exist between adjacent nodes). The data in given in the package is an RND data.
-Actually, only first of five rows in the gene expression data is used to calculate to save the space here.
+The copasi dataset is taken from Copasi2 (Complex Pathway Simulator), a software for simulation and analysis of biochemical networks. The system generates random artificial gene networks according to well-defined topological and kinetic properties. These are used to run in silico experiments simulating real laboratory micro-array experiments. Noise with controlled properties is added to the simulation results several times emulating measurement replicates, before expression ratios are calculated. This series consists of 150 artificial gene networks. Each network consists of 100 genes with a total of 200 gene interactions (on average each gene has 2 modulators). All networks are composed of genes with similar kinetics, the only difference between networks is how the gene interactions are organized (i.e. which genes induce and repress which other genes). The networks belong to three major groups according to their topologies: RND stands for randomized network, SF for scale-free(many edges among few nodes) and SW for small world (edges exist between adjacent nodes). The data given in the package is an RND data. Actually, only first of five rows in the gene expression data is used to calculate to save the space here.
 
-Explain the result:
+Explain the results:
 \begin{itemize}
-\item single.perm.p.value: the single p-value matrix, i.e. the p-value matrix obtained by the simple purmutation method. We can see it is a 5*5 matrix here as we only use data for 5 genes.
-\item multi.perm.p.value: the corrected permutation p-value matrix, i.e. the p-value matrix obtained via corrected permutation method.
-\item MMcorrected.p.value: the MMcorrection p-value matrix, i.e. the p-value matrix obtained via MM-correction method.
-\item net.pred.MMcorrected: the network predicted based on the MM-correction p-value matrix. This network is based on MMcorrected p-values.
-\item net.pred.permut: the network predicted based on the corrected permutation p-value matrix. This network is based on multi-hypothesis-corrected p-values.
+\item \verb@similarity@: the matrix for mutual information.
+\item \verb@single.perm.p.value@: the single p-value matrix, i.e. the p-value matrix obtained by the simple purmutation method. We can see it is a 5*5 matrix here as we only use data for 5 genes.
+\item \verb@multi.perm.p.value@: the corrected permutation p-value matrix, i.e. the p-value matrix obtained via corrected permutation method.
+\item \verb@net.pred.permut@: the network predicted based on the corrected permutation p-value matrix. This network is based on multi-hypothesis-corrected p-values.
 \end{itemize}
 
-This is an Unsupervised case. We could see that a lower values in single.perm.p.value/multi.perm.p.value or a higher values in net.pred.MMcorrected/net.pred.permut indicate a strong link between the row and column genes.
+This is an Unsupervised case. We could see that a lower values in \verb@single.perm.p.value/multi.perm.p.value@ or a higher values in  \verb@net.pred.permut@ indicate a strong link between the row and column genes.
 The value 0 in the p-value matrix or 1 in network matrix respectively infers a strong link.
 
 <<association.genes.traits>>=
-library(BUS)
-data(copasi)
-mat=as.matrix(copasi)[1:5,]
-gt<-matrix(rnorm(200),2,100)
-BUS(EXP=mat,trait=gt,measure="corr",method.correct="both",nflag=2)
+data(tumors.mRNA)
+exp<- as.matrix(tumors.mRNA)[11:15,]
+rownames(exp)<-rownames(tumors.mRNA)[11:15]
+data(tumors.miRNA)
+trait<- as.matrix(tumors.miRNA)[11:15,]
+rownames(trait)<-rownames(tumors.miRNA)[11:15]
+BUS(EXP=exp,trait=trait,measure="MI",nflag=2)
 @
-Here is a Supervised case, we use copasi data as gene expression data and randomly generate for the trait data.
-It is shown that only p-value matrices are output in this case. And we apply the correlation metric this time; thus multi.p.value will not be output.
+Here is a Supervised case, we use the tumor dataset from \cite{liu}, the mRNA data as gene expression data and miRNA data as trait data. Gene expression data were obtained by microarray from human brain tumors, while miRNA data were obtained by RT-PCR. 12 brain tumors at different levels are analyzed for both mRNA and miRNA levels to study the correlation of any mRNA-miRNA pairs.
+Outputs are similar like that in the unsupervised case except the predicted network.
 
 \bibliographystyle{unsrt} 
 
@@ -220,18 +190,17 @@ T.~M. Cover and J.~A. Thomas.
 \newblock John Wiley and Sons, 2001.
 
 \bibitem[Margolin, 2004]{margolin}
-Adam~A. Margolin, Ilya Nemenman, Katia Basso, Ulf Klein, Chris Wiggins, Gustavo
-  Stolovitzky, Riccardo~Dalla Favera, and Andrea Califano.
+A.~A. Margolin, I.~Nemenman, K.~Basso, U.~Klein, C.~Wiggins, G.~Stolovitzky, R.~Dalla. Favera, and A.~Califano.
 \newblock Aracne: An algorithm for the reconstruction of gene regulatory
   networks in a mammalian cellular context, 2004.
 
 \bibitem[Basso, 2005]{basso}
-K~Basso, A~A Margolin, G~Stolovitzky, U~Klein, R~Dalla-Favera, and A~Califano.
+K.~Basso, A.~A. Margolin, G.~Stolovitzky, U.~Klein, R.~Dalla-Favera, and A.~Califano.
 \newblock Reverse engineering of regulatory networks in human b cells.
 \newblock {\em Nat Genet}, 37(4):382--390, Apr 2005.
 
 \bibitem[Meyer, 2008]{meyer}
-P~E Meyer, F~Lafitte, and G~Bontempi.
+P.~E. Meyer, F~Lafitte, and G.~Bontempi.
 \newblock minet: A r/bioconductor package for inferring large transcriptional
   networks using mutual information.
 \newblock {\em BMC Bioinformatics}, 9:461--461, 2008.
@@ -248,10 +217,11 @@ B.~W. Silverman and G.~A. Young.
 \newblock The bootstrap: To smooth or not to smooth?
 \newblock {\em Biometrika}, 74(3):469--479, 1987.
 
-\bibitem[Nardini,2008]{nardinispringer08}
-C.~Nardini, L.~Wang,H.~Peng, L.~Benini,and M.D.~Kuo.
-\newblock MM-Correction: Meta-analysis-Based Multiple Hypotheses Correction in Omic Studies.
-\newblock {\em Springer CCIS}, 25:242-255, 2008.
+\bibitem[Liu, 2007]{liu}
+T.~Liu, T.~Papagiannakopoulos, K.~ Puskar, S.~Qi, F.~ Santiago, W.~ Clay, K.~Lao, Y.~Lee, S.~F. Nelson, H.~I. Kornblum, F.~Doyle, L.~ Petzold, B.~ Shraiman, and K.~S. Kosik.
+\newblock Detection of a microRNA signal in an in vivo expression set of mRNAs.
+\newblock {\em Plos One}, 2(8): e804, 2007.
+
 
 \end{thebibliography}
 \end{document}

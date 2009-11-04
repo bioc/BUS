@@ -2,10 +2,11 @@ Package: BUS
 Type: Package
 Title: Gene network reconstruction
 Depends:  R (>= 2.3.0), minet
-Version: 1.3.0
-Date: 2008-12-09
-Author: Yin Jin, Hesen Peng, Lei Wang and Christine Nardini
-Maintainer: Yin Jin <golden.jinyin@gmail.com>
+Version: 1.0.2
+Date: 2009-10-31
+Author: Yin Jin, Hesen Peng, Lei Wang, Raffaele Fronza, Yuanhua Liu and Christine Nardini
+Maintainer: Yuanhua Liu <liuyuanhua@picb.ac.cn>
 Description: This package can be used to compute associations among genes (gene-networks) or between genes and some external traits (i.e. clinical).
 License: GPL-3
-biocViews: Preprocessing, Bioinformatics
+biocViews: Preprocessing, Statistics
+LazyLoad: yes

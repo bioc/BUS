@@ -5,9 +5,9 @@
 \description{
 This package can be used to compute associations among genes (gene-networks) or between genes and some external traits (i.e. clinical). [Function: BUS]
 
-Both associations can be computed via correlation or mutual information (MI). [Functions: gene.similarity (for adjacency matrix for genes) and gene.trait.similarity (for association between genes and traits)]
+Both associations can be computed via correlation or mutual information (MI). [Functions: gene.similarity (gene-gene associations) and gene.trait.similarity (gene-trait associations)]
 
-Statistical significance of the association is computed for single and multiple hypotheses testing, using (i) random permutations method and (ii) MM-correction. [Functions: gene.pvalue,  gene.trait.pvalue and MM.correction]
+Statistical significance of the association is computed for single and multiple hypotheses testing, using random permutations method [Functions: gene.pvalue,  gene.trait.pvalue]
 
 The package can handle data with missing values using bootstrapping methods to fill NAs. [Arguments: na.replica]
 }
@@ -15,19 +15,14 @@ The package can handle data with missing values using bootstrapping methods to f
 \tabular{ll}{
 Package: \tab BUS \cr
 Type: \tab Package\cr
-Version: \tab 1.0.0\cr
-Date: \tab 2008-12-09\cr
+Version: \tab 1.0.2\cr
+Date: \tab 2009-10-31\cr
 License: \tab GPL-3\cr
 }
 }
 \author{
-Yin Jin, Hesen Peng, Lei Wang and Christine Nardini
+Yin Jin, Hesen Peng, Lei Wang, Raffaele Fronza, Yuanhua Liu and Christine Nardini
 
-Maintainer: Yin Jin<golden.jinyin@gmail.com>
-}
-\references{
-C. Nardini, H. Peng, L. Wang, L. Benini, M.D. Kuo, MM-Correction: Meta-analysis-Based Multiple Hypotheses Correction in Omic Studies, Springer CCIS, Vol 25, pp 242-255, 2008.
+Maintainer: Yuanhua Liu<liuyuanhua@picb.ac.cn.com>
 }
 \keyword{ multivariate }
-
-

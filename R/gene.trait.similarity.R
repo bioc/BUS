@@ -1,6 +1,21 @@
-"gene.trait.similarity"<-function(EXP,trait,measure,data.type=c("continuous","continuous"),na.replica=50){
-if((data.type[1]!="continuous")&&(data.type[1]!="discrete")) stop("Wrong data type for gene expression data") 
-if((data.type[2]!="continuous")&&(data.type[2]!="discrete")) stop("Wrong data type for trait data") 
+`gene.trait.similarity` <-
+function(EXP,trait,measure,na.replica=50){
+
+gene.trait.min<-function(mat,nat)
+{
+	n1 <- ncol(mat)
+	n2 <- ncol(nat)
+	N <- nrow(mat)
+	
+	mat[which(is.na(mat))] <- -2000000
+	nat[which(is.na(nat))] <- -2000000
+    mi.vector <- .Call( "MINempirical", mat, nat, N, n1, n2,DUP=FALSE)
+    dim(mi.vector) <- c(n1,n2)
+    mi.matrix <- as.matrix(mi.vector)
+    return(mi.matrix)
+
+}
+
 complete<-function(x,smooth){
   x.all <- x[!is.na(x)]
   n.missing <- sum(is.na(x))
@@ -17,39 +32,22 @@ corr.both<-function(mat,nat,data.type){
     return(cor(mat,nat))
   }
 mi.both<-function(mat,nat,data.type){
-    mat <- t(apply(mat,1,FUN="complete",smooth=(data.type[1]=="continuous")))
-    nat <- t(apply(nat,1,FUN="complete",smooth=(data.type[2]=="continuous")))
-    mi.core <- function(x,y,data.type){
-      len <- length(x)
-      n.bin <- round(sqrt(len))
-      if(data.type[1]=="continuous"){
-        xo <- ceiling((rank(x))/n.bin)
-      }else{
-        xo <- x
-      }
-      if(data.type[2]=="continuous"){
-        yo <- ceiling((rank(y))/n.bin)
-      }else{
-        yo <- y
-      }
-      xt <- table(xo)/len
-      yt <- table(yo)/len
-      ## joint distribution for x and y
-      xyt <- table(xo,yo)/len
-      xyt <- xyt[xyt!=0]
-      ## entropy for x and y
-      x.h <- sum(xt*log(xt))
-      y.h <- sum(yt*log(yt))
-      ## joint entropy
-      xy.h <- sum(xyt*log(xyt))
-      ## standardized by entropy for y so that MI values are within [0,1]
-      return((xy.h-x.h-y.h)/min(c(-y.h,-x.h)))
-    }
-    out.mi <- function(i,j,data.type){
-    return(mi.core(mat[i,],nat[j,],data.type))
-    }
-    v <- Vectorize(out.mi,vectorize.args=c("i","j"))
-    return(outer(1:nrow(mat),1:nrow(nat),FUN="v",data.type=data.type))
+	
+    mat <- apply(mat,1,FUN="complete",smooth=(data.type[1]=="continuous"))
+    nat <- apply(nat,1,FUN="complete",smooth=(data.type[2]=="continuous"))
+    
+    if(data.type[1]=="continuous")
+      	mat<-as.matrix(discretize(mat))
+    else
+        mat<-as.matrix(mat)
+    if(data.type[2]=="continuous")
+      	nat <-as.matrix(discretize(nat))
+    else
+        nat<-as.matrix(nat)
+ 
+    out.mi<-gene.trait.min(mat, nat)
+    
+    return(norm(out.mi))
   }
 b.similarity=function(mat,nat,measure,data.type){
   if(measure=="MI"){
@@ -63,12 +61,36 @@ b.similarity=function(mat,nat,measure,data.type){
         }
     }
   }
+  
+# data type recognition
+data.type.exp<-"continuous"
+if(!is.integer(EXP))
+data.type.exp<-"continuous"
+else
+data.type.exp<-"discrete"
+if(!is.integer(trait))
+data.type.trait<-"continuous"
+else
+data.type.trait<-"discrete"
+data.type<-c(data.type.exp,data.type.trait)
+
+gene.names<-rownames(EXP)
+trait.names<-rownames(trait)
+
 if((measure!="MI")&&(measure!="corr")) stop("measure is not correct")
-if(any(c(is.na(EXP),is.na(trait)))){
+if(any(c(is.na(EXP),is.na(trait))))
+{
   ut <- replicate(na.replica,b.similarity(EXP,trait,measure,data.type))
   out <- apply(array(ut,c(nrow(EXP),nrow(trait),na.replica)),c(1,2),mean)
-  return(out)
-  }else{
-    return(b.similarity(EXP,trait,measure,data.type))
+
   }
+  else
+  {
+  	out<-b.similarity(EXP,trait,measure,data.type)
+
+    
+  }
+dimnames(out)<-list(gene.names,trait.names)
+return(out)
 }
+

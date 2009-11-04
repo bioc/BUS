@@ -1,6 +1,6 @@
+useDynLib("BUS.so")
 export(BUS, 
 pred.network,
-MM.correction,
 gene.similarity,
 gene.trait.similarity,
 gene.pvalue,
