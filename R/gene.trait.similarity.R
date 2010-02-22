@@ -16,6 +16,13 @@ gene.trait.min<-function(mat,nat)
 
 }
 
+norm <- function(x)
+{
+      x <- x-min(x)
+      x <- x/max(x)
+      x
+}
+
 complete<-function(x,smooth){
   x.all <- x[!is.na(x)]
   n.missing <- sum(is.na(x))
