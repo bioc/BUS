@@ -7,7 +7,7 @@ artificial gene networks according to well-defined topological and kinetic prope
 are calculated. This series consists of 150 artificial gene networks. Each network consists of 100 genes with a total of 200 gene interactions (on average each gene has 2 modulators). 
 }
 \format{
-A data frame is size of 100x200, the 100 rows represent 100 genes and 200 columns for 200 experiments.
+A data frame is size of 100x100, the 100 rows represent 100 genes and 100 columns for 100 experiments.
 }
 \references{
 See http://www.comp-sys-bio.org/AGN/data.html for detailed information.
