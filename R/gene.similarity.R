@@ -1,5 +1,12 @@
 `gene.similarity` <-
 function(EXP,measure,net.trim,na.replica=50){
+norm <- function(x)
+{
+      x <- x-min(x)
+      x <- x/max(x)
+      x
+}
+
 complete <-function(x,smooth)
 {
   x.all <- x[!is.na(x)]
@@ -20,12 +27,16 @@ s.similarity=function(x,measure,net.trim)
       }
       else{
        out=build.mim(discretize(mat))
+ 
+       
       }
   if(net.trim=="mret") {
     out=norm(mrnet(out))
     }
     else if((net.trim=="aracne")){
+ 
       out=norm(aracne(out))
+
       }
       else if(net.trim=="clr"){
         out=norm(clr(out))
@@ -33,6 +44,7 @@ s.similarity=function(x,measure,net.trim)
         else {
           if(length(unique(as.vector(out)))>1)  out=norm(out)
           }
+
   diag(out)=1
   return(out)
   }
