@@ -26,4 +26,4 @@ mat=as.matrix(copasi)[1:10,]
 rownames(mat)<-paste("G",1:nrow(mat), sep="")
 res<-gene.similarity(mat,measure="corr",net.trim="none")
 }
-\keyword{arith}  }
+\keyword{arith}
