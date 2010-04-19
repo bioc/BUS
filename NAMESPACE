@@ -1,4 +1,7 @@
-useDynLib("BUS.so")
+useDynLib(BUS)
+
+importFrom(stats, cor, cor.test, pbeta, runif, var)
+
 export(BUS, 
 pred.network,
 gene.similarity,
