@@ -9,5 +9,5 @@ Author: Yin Jin, Hesen Peng, Lei Wang, Raffaele Fronza, Yuanhua Liu and Christin
 Maintainer: Yuanhua Liu <liuyuanhua@picb.ac.cn>
 Description: This package can be used to compute associations among genes (gene-networks) or between genes and some external traits (i.e. clinical).
 License: GPL-3
-biocViews: Preprocessing, Statistics
+biocViews: Preprocessing
 LazyLoad: yes
