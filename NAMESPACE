@@ -1,6 +1,7 @@
 useDynLib(BUS)
 
 importFrom(stats, cor, cor.test, pbeta, runif, var)
+importFrom(infotheo, discretize)
 
 export(BUS, 
 pred.network,
