@@ -3,7 +3,7 @@ Type: Package
 Title: Gene network reconstruction
 Depends: R (>= 2.3.0), minet
 Imports: stats, infotheo
-Version: 1.54.0
+Version: 1.55.0
 Date: 2010-04-19
 Author: Yin Jin, Hesen Peng, Lei Wang, Raffaele Fronza, Yuanhua Liu and Christine Nardini
 Maintainer: Yuanhua Liu <liuyuanhua@picb.ac.cn>
